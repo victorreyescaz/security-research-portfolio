@@ -1,0 +1,10 @@
+# Vendored dependencies must not count toward the repository's language stats:
+# the GitHub language bar should reflect the audited code and the tests, not
+# OpenZeppelin and forge-std.
+engagements/*/code/lib/** linguist-vendored
+
+# Line endings stay LF in the repository regardless of platform, so the
+# vendored dependencies and the audited contracts remain byte-identical to
+# the commits they were copied from.
+*.sol text eol=lf
+*.md text eol=lf

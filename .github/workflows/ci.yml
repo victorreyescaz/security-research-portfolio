@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  hacktoken:
+    name: HackToken remediation — full suite
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: engagements/2026-09-hacktoken-remediation/code
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      - name: Build
+        run: forge build
+
+      # Every proof of concept in this engagement was rewritten into the
+      # regression that asserts the safe property, so there is no test left
+      # failing by design and the whole suite is the signal.
+      - name: Run tests
+        run: forge test

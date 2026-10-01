@@ -1,0 +1,27 @@
+# Foundry build output
+out/
+cache/
+broadcast/
+.foundry/
+
+# Dependencies are vendored inside each engagement's code/ directory, so the
+# proofs of concept still compile years from now. See NOTICE.md.
+# Any other lib/ is a local scratch checkout and stays out.
+lib/
+!engagements/*/code/lib/
+
+# Node
+node_modules/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.idea/
+.vscode/
+
+# Logs and local scratch
+*.log
+.env
+.env.*
