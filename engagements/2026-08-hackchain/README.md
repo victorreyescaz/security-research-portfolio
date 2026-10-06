@@ -10,7 +10,7 @@ Review date 2026-08-12.
 | **Scope** | 14 Solidity contracts, around 4,200 LoC |
 | **Findings** | 10: 4 High · 4 Medium · 2 Low · 0 Critical |
 | **Found by** | Me. This is my own review, not a remediation of someone else's |
-| **Published here** | 2 of the 10, the ones whose remediation is merged |
+| **Published here** | 4 of the 10, the ones that are closed |
 
 ## What this engagement was
 
@@ -39,17 +39,17 @@ reported. None of them is a theoretical concern.
 | HC-SRC-001 | High | - | Under remediation |
 | [HC-SRC-002](findings/HC-SRC-002-blocked-profile-enforcement.md) | High | Blocked profiles are not enforced across the protocol | **Published** |
 | [HC-SRC-003](findings/HC-SRC-003-penalty-evidence-snapshot.md) | High | Percentage penalties use mutable live balances instead of evidence snapshots | **Published** |
-| HC-SRC-004 | Medium | - | Under remediation |
+| [HC-SRC-004](findings/HC-SRC-004-role-registry-consistency.md) | Medium | RoleRegistry is not used consistently as the source of truth | **Published** |
 | HC-SRC-005 | Medium | - | Under remediation |
 | HC-SRC-006 | Medium | - | Under remediation |
-| HC-SRC-007 | Low | - | Under remediation |
+| [HC-SRC-007](findings/HC-SRC-007-unregistered-recruiter-hiring-bonus.md) | Low | Monthly recruiter hiring bonus can be claimed by an unregistered recruiter | **Published** |
 | HC-SRC-008 | High | - | Under remediation |
 | HC-SRC-009 | Medium | - | Under remediation |
 | HC-SRC-010 | Low | - | Under remediation |
 
-Ten findings were identified in this review. The two whose fixes are merged are
-documented here in full. The remaining eight are published as they close, one
-at a time, because publishing the detail of an open vulnerability against a
+Ten findings were identified in this review. The four that are closed are
+documented here in full. The remaining six are published as they close, one at
+a time, because publishing the detail of an open vulnerability against a
 protocol that has not launched would be irresponsible. That includes the
 titles, which in a review like this one describe the weakness closely enough to
 be a map.
@@ -62,13 +62,13 @@ behind that.
 This engagement publishes write-ups and no contract source, which is the one
 place where it differs from the HackToken engagement in this repository.
 
-The reason is the overlap. The contracts that the two closed findings touch,
-`RoleRegistry`, `PenaltySystem`, `StakingContract` and `MembershipSystem`,
-still carry open findings of their own. Publishing enough code to make the two
-proofs of concept runnable would mean publishing contracts that are vulnerable
-by other routes, which is exactly what the condition above rules out.
+The reason is the overlap. The contracts that the closed findings touch are,
+for the most part, the same contracts that still carry open findings.
+Publishing enough code to make these proofs of concept runnable would mean
+publishing contracts that are vulnerable by other routes, which is exactly what
+the condition above rules out.
 
-Both write-ups carry the reproduction, the transcript, the applied fix and the
+Each write-up carries the reproduction, the transcript, the applied fix and the
 regression tests that hold it in place. What is missing is the ability to run
 them yourself, and that comes back as the surrounding findings close.
 
@@ -81,11 +81,13 @@ A finding is not closed when the patch lands. It is closed when the original
 exploit stops reproducing *for the right reason*, there is a regression test
 that fails if the behaviour comes back, and the write-up is done.
 
-The two published here reached that point differently, and the write-ups say
-so. HC-SRC-002 leaves its original exploit in the suite, still failing today
-with `ProfileBlocked()`. HC-SRC-003 could not do that, because the remediation
-changed the function signatures and the old call no longer compiles, so its red
-state lives in git history instead. Both are verified. They are not verified by
-the same kind of evidence, and that is worth saying out loud.
+The four published here did not all reach that point the same way, and the
+write-ups say so. HC-SRC-002, HC-SRC-004 and HC-SRC-007 leave their original
+exploits in the suite, still failing today with `ProfileBlocked()`,
+`NotEducator()` and `NotRegistered()`. HC-SRC-003 could not do that, because
+the remediation changed the function signatures and the old call no longer
+compiles, so its red state lives in git history instead. All four are
+verified. They are not all verified by the same kind of evidence, and that is
+worth saying out loud.
 
 → [Methodology](../../about/methodology.md)

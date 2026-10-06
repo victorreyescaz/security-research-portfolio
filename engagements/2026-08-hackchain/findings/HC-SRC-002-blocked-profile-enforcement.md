@@ -264,8 +264,10 @@ giving up a benefit they already hold.
 
 ## Residual risk
 
-Part of what this fix leaves behind relates to findings that are still under
-remediation and not published yet. It will appear here when they close.
+This fix makes `RoleRegistry` the single source of truth for *blocked
+status*, and in doing so lays the groundwork for
+[HC-SRC-004](HC-SRC-004-role-registry-consistency.md), the same class of
+problem applied to *business roles*. That finding is now closed as well.
 
 The remediation also duplicated the `IRoleRegistry` interface and a
 `setRoleRegistry()` setter across eight contracts. That is a maintenance

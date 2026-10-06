@@ -7,7 +7,7 @@
 | **Class** | State read at the wrong time, attacker-controlled input |
 | **Contracts** | `PenaltySystem` |
 | **Reported** | 2026-08-12 |
-| **Resolved** | 2026-09-30 |
+| **Resolved** | 2026-09-25 |
 
 ## Summary
 
@@ -90,7 +90,7 @@ system does not have.
 If the trust model is to change, it changes protocol-wide and as its own
 piece of work.
 
-**Commit** `f906007`, merged into `main` on 2026-09-30 via PR #2. Developed on
+**Commit** `f906007`, merged into `main` on 2026-09-25 via PR #2. Developed on
 `fix/hc-src-003-penalty-evidence-snapshot`, stacked on the HC-SRC-002 branch.
 
 ## Verification
