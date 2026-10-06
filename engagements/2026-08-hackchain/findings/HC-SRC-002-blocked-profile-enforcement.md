@@ -66,14 +66,8 @@ is not redistributed here, see the
 [disclosure policy](../../../about/disclosure-policy.md). The client can
 verify the run against `70e6b81` in their own repository.
 
-Run the same proof of concept against the remediated code in this
-repository. It now reverts, which is the subject of
-[Verification](#verification):
-
-```bash
-cd code
-forge test --match-test testBlockedProfileCanStillOpenAStake -vvv
-```
+Against the remediated code the same proof of concept now reverts, which is
+the subject of [Verification](#verification).
 
 ## Impact
 

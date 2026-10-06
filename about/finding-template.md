@@ -45,6 +45,6 @@ Tests, build output, or manual checks that prove the fix.
 
 The write-ups under `engagements/*/findings/` follow this same order and add
 two sections the client report does not carry: **Proof of concept**, with the
-command to reproduce and the transcript it produces, and **Residual risk**,
+test code and the transcript of its run, and **Residual risk**,
 recording what the fix left behind: deferred design decisions, duplication
 it introduced, and deployment invariants it now depends on.

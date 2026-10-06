@@ -109,8 +109,8 @@ from where the review actually left off.
 
 ## Tooling
 
-Foundry (`forge test`, fuzzing, invariant testing) for reproduction and
-regression. Manual review is the primary instrument. Static analysis is used
+Foundry (`forge test`) for proof-of-concept exploits and regression tests.
+Manual review is the primary instrument. Static analysis is used
 as a sweep for the mechanical classes of bug, never as the review itself.
 
 ## Write-up structure

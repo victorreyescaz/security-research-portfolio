@@ -5,15 +5,17 @@ Solidity · Foundry · EVM
 
 [![CI](https://github.com/victorreyescaz/security-research-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/victorreyescaz/security-research-portfolio/actions/workflows/ci.yml)
 
-Each engagement here has the analysis, a write-up for every finding, and
-Foundry tests you can run yourself. If something is described here, there is a
-test that shows it.
+Each engagement here has the analysis and a write-up for every finding that can
+be published. Where the client's code can be published too, it comes with
+Foundry tests you can run yourself. Where it cannot yet, each write-up carries
+the proof of concept and the transcript of its run instead. Either way, if
+something is described here, there is a test that shows it.
 
 ## Engagements
 
 | Engagement | Type | Scope | Findings | Severity | Status |
 |---|---|---|---|---|---|
-| [HackChain](engagements/2026-08-hackchain/) | Security review, my own findings | 14 contracts, ~4,200 LoC Solidity | 10, found by me | 4 High · 4 Medium · 2 Low | 2 published · 8 under remediation |
+| [HackChain](engagements/2026-08-hackchain/) | Security review, my own findings | 14 contracts, ~4,200 LoC Solidity | 10, found by me | 4 High · 4 Medium · 2 Low | 4 published · 6 under remediation |
 | [HackToken](engagements/2026-09-hacktoken-remediation/) | Remediation of a third-party audit | 1 contract, 130 LoC Solidity | 10, found by Itish Audit Company | 2 High · 3 Low · 3 Informational · 2 Gas | 10 verified · re-review pending |
 
 ## How I work
@@ -23,18 +25,17 @@ exploit stops reproducing *for the right reason*, and there is a regression
 test that fails if the behaviour ever comes back.
 
 I also check the report itself. Every finding handed to me was tested against
-what the code actually does before I changed a line, and in the engagement
-above that check changed how the highest-severity finding was fixed.
+what the code actually does before I changed a line, and in HackToken that
+check changed how the highest-severity finding was fixed.
 
 → [Methodology](about/methodology.md) · [Disclosure policy](about/disclosure-policy.md)
 
 ## Stack
 
 - **Languages**: Solidity
-- **Testing**: Foundry (`forge test`, fuzzing, invariant testing)
+- **Testing**: Foundry (`forge test`), proof-of-concept exploits and regression tests
 - **Focus areas**: access control and role consistency, state ownership across
-  modules, reward accounting, replay and evidence uniqueness, deployment-time
-  invariants
+  modules, reward accounting, deployment-time invariants
 
 ## Permissions and licensing
 
