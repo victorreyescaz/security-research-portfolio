@@ -52,8 +52,8 @@ Suite result: ok. 2 passed; 0 failed; 0 skipped
 ```
 
 The first test is the proof of concept for
-[HC-SRC-004](HC-SRC-004-role-registry-consistency.md), fixed on the same
-branch.
+[HC-SRC-004](HC-SRC-004-role-registry-consistency.md), fixed alongside this
+one.
 
 Four distinct hiring IDs were recorded for an address the contract itself
 reports as unregistered, and that address then claimed the full monthly
@@ -101,22 +101,15 @@ Both checks were added as recommended:
   }
 ```
 
-### Why it was fixed alongside HC-SRC-004
+### Fixed together with HC-SRC-004
 
 [HC-SRC-004](HC-SRC-004-role-registry-consistency.md) adds a `RoleRegistry`
-recruiter check to the same functions of the same contract. Fixing only that
-one would have closed this proof of concept as a side effect, failing with the
-registry's error instead of the one this finding asks for, and would have left
-these two functions as the only ones in the contract without `isRegistered`.
-Fixing this one later, on its own branch, would have meant touching the same
-lines twice.
+recruiter check to these same functions, and on its own that check would also
+have stopped this proof of concept, but with the registry's error rather than
+the one this finding calls for. The `isRegistered` check runs first in each
+function, so the proof of concept fails through its own fix, `NotRegistered()`.
 
-So both were fixed on the same branch, in separate commits, with this one
-first. The proof of concept fails through its own fix, `NotRegistered()`.
-Inside each function the `isRegistered` check runs before the registry check,
-which keeps that true after both commits are applied.
-
-**Commit**: `82fee06` on branch `fix/hc-src-004-role-registry-consistency`.
+**Fixed in**: `82fee06`.
 
 ## Verification
 

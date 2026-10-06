@@ -90,8 +90,7 @@ system does not have.
 If the trust model is to change, it changes protocol-wide and as its own
 piece of work.
 
-**Commit** `f906007`, merged into `main` on 2026-09-25 via PR #2. Developed on
-`fix/hc-src-003-penalty-evidence-snapshot`, stacked on the HC-SRC-002 branch.
+**Fixed in**: `f906007`.
 
 ## Verification
 
@@ -103,9 +102,8 @@ Three regression tests in `PenaltySystemHCSRC003Test.t.sol`:
 | `test_HCSRC003_MassSalePenaltyUsesHoldingsBeforeSaleNotLiveBalance` | the eligibility checks read the pre-sale holdings, not the live balance |
 | `test_HCSRC003_PenaltyCaseIdCannotBeReplayed` | the same case cannot be charged twice |
 
-`forge test` on the branch where this landed: 124 of 125 passing, with the
-single failure being the HC-SRC-002 proof of concept, which is unrelated and
-fails by design.
+`forge test` after the fix: 124 of 125 passing, with the single failure being
+the HC-SRC-002 proof of concept, which is unrelated and fails by design.
 
 ### A note on the proof of concept
 
@@ -118,7 +116,7 @@ is zero.
 
 That is a real difference in evidence. For HC-SRC-002 the closed path is
 demonstrated by a test that still fails today. Here the red state exists only
-in git history, in the commit before `f906007`. Worth saying plainly rather
+in the client repository, in the commit before `f906007`. Worth saying plainly rather
 than presenting both findings as if they were verified the same way.
 
 ## Residual risk

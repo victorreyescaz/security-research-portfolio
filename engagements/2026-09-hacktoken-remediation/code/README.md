@@ -19,11 +19,10 @@ forge test
 ```
 
 Everything is green, and no test is left failing by design. Every proof of
-concept that
-demonstrated a vulnerability has been rewritten into the regression that
-asserts the safe property instead. The evidence that the vulnerabilities were
-real lives in git history: the commit that introduced the proofs of concept has
-all five passing against the audited contract.
+concept that demonstrated a vulnerability has been rewritten into the
+regression that asserts the safe property instead. The evidence that the
+vulnerabilities were real is commit `97ba65e` of the client repository, where
+all five pass against the audited contract.
 
 To run only the regression batteries, leaving the reproduction tests out:
 
@@ -92,18 +91,20 @@ after deployment.
 
 ## Provenance
 
-Snapshot of the client repository `hackchain-token-contracts`, branch
-`fix/hc-tkn-external-audit-remediation`, at commit `c321787`.
+Snapshot of the client repository `hackchain-token-contracts` at commit
+`c321787`.
 
 The version Itish audited is commit `70e6b81`. The token was untouched between
 that commit and the start of this remediation, and the line numbers cited
-throughout the report match it exactly. The remediation diff on the contract
-itself is 111 insertions and 65 deletions in one file.
+throughout the report match it exactly.
 
-`src/HackTokenERC20.sol` is byte-identical to the client repository. The only
-edits are to the relative imports of the tests and script (`../src/` became
-`../../src/`), because they were moved into subdirectories that do not exist
-upstream.
+`src/HackTokenERC20.sol` is byte-identical to the client repository. Two kinds
+of edit were made elsewhere. The tests were moved into `test/exploits/` and
+`test/regression/`, subdirectories that do not exist upstream, so their
+relative imports changed from `../src/` to `../../src/`. And the multisig
+address is replaced by a placeholder constant in `script/DeployHackToken.s.sol`
+and in `TokenHCTKN003Test.t.sol`, for the reason given in the
+[engagement README](../README.md#deployment-readiness).
 
 **Compiler settings** are pinned in `foundry.toml` (`evm_version = "cancun"`,
 optimizer off) so the bytecode is reproducible. They were implicit before:

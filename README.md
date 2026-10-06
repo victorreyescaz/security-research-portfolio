@@ -28,7 +28,11 @@ I also check the report itself. Every finding handed to me was tested against
 what the code actually does before I changed a line, and in HackToken that
 check changed how the highest-severity finding was fixed.
 
-→ [Methodology](about/methodology.md) · [Disclosure policy](about/disclosure-policy.md)
+Every finding I report is reproduced first with a Foundry proof of concept,
+written to pass against the vulnerable code so that a green test states exactly
+what the contract does. Severity is argued in each write-up, not asserted.
+
+→ [Disclosure policy](about/disclosure-policy.md)
 
 ## Stack
 
@@ -39,14 +43,15 @@ check changed how the highest-severity finding was fixed.
 
 ## Permissions and licensing
 
-This work is published with the permission of HackChain, the client that
-commissioned it. Third-party audit reports belonging to other firms are not
+This work is published with the written permission of HackChain, the client
+that commissioned it, on one condition: nothing published here may be
+vulnerable. Third-party audit reports belonging to other firms are not
 redistributed here. Where this repository covers findings from an external
 audit, those findings are credited to their authors and described in my own
 words.
 
-- My own work (write-ups, proof-of-concept tests, regression tests and
-  methodology) is MIT licensed, see [`LICENSE`](LICENSE).
+- My own work (write-ups, proof-of-concept tests and regression tests) is MIT
+  licensed, see [`LICENSE`](LICENSE).
 - Client contract source remains the property of its owner and is included only
   so the tests compile and run. Its presence here does not relicense it.
 - Vendored dependencies (OpenZeppelin Contracts, forge-std) keep their own

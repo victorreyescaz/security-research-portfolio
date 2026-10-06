@@ -184,10 +184,8 @@ validated by someone else still gets paid.
 of the original finding. `TalentBonuses.distributeToTalents()` is an
 enforcer-driven payout and was scoped out of this fix.
 
-**Commits**: `e7ab48f`, `3df044a`, `f58b2f9`, `6e67a49`, `a2c9651`,
-`5dc02e8`, `5d8b325`, `be8f3aa`, `0faf70e`, `ec77f0a` on branch
-`fix/hc-src-002-blocked-profile-enforcement`. 10 contracts and 18 test files
-touched, 1,572 insertions.
+**Fixed in**: `e7ab48f`, `3df044a`, `f58b2f9`, `6e67a49`, `a2c9651`,
+`5dc02e8`, `5d8b325`, `be8f3aa`, `0faf70e`, `ec77f0a`.
 
 ## Verification
 

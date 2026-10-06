@@ -56,8 +56,8 @@ Suite result: ok. 2 passed; 0 failed; 0 skipped
 ```
 
 The second test is the proof of concept for
-[HC-SRC-007](HC-SRC-007-unregistered-recruiter-hiring-bonus.md), fixed on the
-same branch.
+[HC-SRC-007](HC-SRC-007-unregistered-recruiter-hiring-bonus.md), fixed
+alongside this one.
 
 The account was registered, revoked, confirmed as not an educator by the
 registry, and then paid the 50,000 HACK API integration bonus in the next
@@ -186,8 +186,7 @@ organize one. Forcing it into Talent, Educator or Recruiter would have
 invented a restriction the product never had. A regression test pins the
 exemption so it is not "fixed" later by accident.
 
-**Commits**: `8442779`, `32a2277`, `2871ecf`, `7285f12`, `f3be9b5`, `42cc60b`
-on branch `fix/hc-src-004-role-registry-consistency`, one per contract.
+**Fixed in**: `8442779`, `32a2277`, `2871ecf`, `7285f12`, `f3be9b5`, `42cc60b`.
 
 ## Verification
 
@@ -205,11 +204,10 @@ added to `rewardApiIntegration()`. It fails for the correct reason, and like
 the one for HC-SRC-002 it was left in the suite unmodified, still asserting
 that the payment succeeds, as the record that the vulnerable path existed.
 
-Full suite on the branch: 210 passed, 3 failed. The three failures are the
-proofs of concept of HC-SRC-002, this finding and
+After the fix the full suite passes except for three proofs of concept, those
+of HC-SRC-002, this finding and
 [HC-SRC-007](HC-SRC-007-unregistered-recruiter-hiring-bonus.md), each
-reverting with the error its own fix introduced. The branch also carries the
-HackToken remediation, so the total includes the token's regression suite.
+reverting with the error its own fix introduced.
 
 ### 30 regression tests pin the new rules
 

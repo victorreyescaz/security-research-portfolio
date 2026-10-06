@@ -31,8 +31,7 @@ What I contributed is everything downstream of that report:
   actually does before a line was changed. That check is written up in
   [`verification-of-external-findings.md`](verification-of-external-findings.md),
   and it changed the remediation of the highest-severity finding.
-- **Remediation.** One commit per finding, each carrying its own regression
-  battery.
+- **Remediation.** The fix for each finding, with its own regression battery.
 - **Regression coverage.** Every proof of concept becomes a test asserting the
   safe property, so the finding cannot come back unnoticed.
 
@@ -55,7 +54,7 @@ Severities as assigned by Itish.
 
 A finding is `Verified` when the original proof of concept no longer
 reproduces *for the right reason* and a regression test locks the new property
-in place. See [methodology](../../about/methodology.md). It becomes `Closed`
+in place. It becomes `Closed`
 when the external auditor's re-review confirms it, which has not happened yet.
 
 The two High findings carry standalone write-ups because they are where the
@@ -63,8 +62,7 @@ analysis lies. In both, verifying the report against the source changed what
 the right remediation was. The other eight are covered finding by finding in
 [`verification-of-external-findings.md`](verification-of-external-findings.md).
 
-**Six commits**, one per finding or coherent group, each with its regression
-battery. **55 tests** on the token: 5 in the map file, 50 in the batteries.
+**55 tests** on the token: 5 in the map file, 50 in the regression batteries.
 
 ## Two findings outside the report
 

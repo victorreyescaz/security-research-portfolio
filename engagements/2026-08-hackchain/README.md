@@ -86,8 +86,6 @@ write-ups say so. HC-SRC-002, HC-SRC-004 and HC-SRC-007 leave their original
 exploits in the suite, still failing today with `ProfileBlocked()`,
 `NotEducator()` and `NotRegistered()`. HC-SRC-003 could not do that, because
 the remediation changed the function signatures and the old call no longer
-compiles, so its red state lives in git history instead. All four are
-verified. They are not all verified by the same kind of evidence, and that is
-worth saying out loud.
-
-→ [Methodology](../../about/methodology.md)
+compiles, so its red state lives in the client repository's history instead.
+All four are verified. They are not all verified by the same kind of
+evidence, and that is worth saying out loud.
