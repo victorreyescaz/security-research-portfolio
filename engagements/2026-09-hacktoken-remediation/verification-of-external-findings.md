@@ -1,26 +1,19 @@
 # Verification of the external findings
 
 A remediation is only as good as the premise it is built on. Before changing a
-line of the token, each finding in the Itish report was checked against three
-sources that should agree and sometimes do not:
+line of the token, every finding in the Itish report was checked against what
+the contract actually does.
 
-1. **The audit report**: what the external auditor found and what they
-   recommend, bullet by bullet.
-2. **The client's internal task list**: how the finding was written up for the
-   team to action.
-3. **The contract source**: what the code actually does.
-
-This document records that check per finding. It exists because in the
-highest-severity finding the three sources did not agree, and following the
-report literally would have produced a mitigation for a capability the protocol
-does not use and cannot use.
+In the highest-severity finding the two did not agree, and following the report
+literally would have produced a mitigation for a capability the protocol does
+not use and cannot use.
 
 ---
 
 ## HC-TKN-001 · `BURNER_ROLE` can burn any balance without consent
 
-**Itish severity: High.** The finding itself is correct and the reproduction
-confirms it.
+**Itish severity: High.** The finding is correct and the reproduction confirms
+it.
 
 ### What the report says
 
@@ -46,20 +39,9 @@ sentence of reasoning:
 > The comments indicate this is intentional so that a future PenaltySystem
 > contract can burn tokens from penalized users.
 
-### What the internal task list says
-
-The same diagnosis, and three of the four bullets: restrict the role to a single
-contract under multisig control, document it as a penalty facility rather than a
-voluntary burn, and cap the amount per call.
-
-It drops the case-id, the timelock, and the per-epoch cap. The case-id is the
-only one of the four that provides traceability. The other three are
-preventive. Without it, a legitimate penalty burn and an arbitrary confiscation
-are indistinguishable on-chain, which is precisely what the finding objects to.
-
 ### What the source says
 
-The auditor's reasoning comes from a comment in the token contract:
+That sentence traces back to a comment in the token contract:
 
 ```solidity
 /**
@@ -69,8 +51,8 @@ The auditor's reasoning comes from a comment in the token contract:
  */
 ```
 
-`PenaltySystem` does not burn. It records each sanction against a destination
-and settles by transfer:
+The comment is wrong. `PenaltySystem` does not burn. It records each sanction
+against a destination and settles by transfer:
 
 ```solidity
 address destination = isExternal_ ? treasury : affected_;
@@ -81,7 +63,7 @@ bool success = hackToken.transferFrom(msg.sender, p.destination, p.amount);
 The penalty **redistributes** value to the treasury or to the wronged educator.
 Burning would destroy exactly what the mechanism is designed to deliver to the
 injured party. The capability is not merely unused. It is incompatible with the
-design it was allegedly built for.
+design it was documented as serving.
 
 Three further observations from the source:
 
@@ -98,10 +80,9 @@ Three further observations from the source:
 
 ### Decision
 
-The premise being false changes the remediation, so the choice was put to the
-client, not settled unilaterally. Two options were presented: keep the
-capability and wrap it in the controls the report asks for, or remove it. The
-client chose removal.
+With the premise gone the remediation changes, so the choice was put to the
+client. Two options were presented: keep the capability and wrap it in the
+controls the report asks for, or remove it. The client chose removal.
 
 The contract now inherits OpenZeppelin's `ERC20Burnable`:
 
@@ -111,23 +92,20 @@ burnFrom(address account, uint256 value)  // requires the holder's allowance
 ```
 
 `from_`, `BURNER_ROLE`, the `TokenBurned` event and the `InsufficientBalance`
-error are gone. Net diff: +11 / −21 lines.
+error are gone.
 
-Two smaller calls, both toward less bespoke code. `TokenBurned` was not preserved
-via an override. The standard signal for a burn is `Transfer(holder, 0x0,
-value)`, which ERC20 already emits and every indexer already understands.
-Zero-amount burns are not rejected, since they are a harmless no-op and the
-override would
-add gas to every legitimate burn.
+`TokenBurned` was not preserved through an override. The standard signal for a
+burn is `Transfer(holder, 0x0, value)`, which ERC20 already emits and every
+indexer already understands. Zero-amount burns are no longer rejected, since
+they are a harmless no-op and the check would add gas to every legitimate burn.
 
-**Why this is a closure and not a mitigation:** with `from_` removed, no
-third party can reach another holder's balance at all. Allowance is not a
-weaker version of the same control. It moves the authority from the token
-admin to the token holder, who grants a bounded amount and can revoke it.
+**Why this closes the finding instead of mitigating it:** with `from_` removed,
+no third party can reach another holder's balance at all. An allowance is not a
+weaker version of the same control. It moves the authority from the token admin
+to the token holder, who grants a bounded amount and can revoke it.
 
-**What was consciously not implemented**, for the re-review: the report's four
-bullets are not rejected, they are moot. There is no administrative burn left to
-document, cap, restrict or annotate with a case-id.
+The report's four bullets are not rejected. They are moot. There is no
+administrative burn left to document, cap, restrict or annotate with a case-id.
 
 ### Regression coverage
 
@@ -171,16 +149,6 @@ by the deployer should be revoked at the same time, atomically**, alternatively
 remove Ownable entirely, and document in NatSpec what the transfer does and does
 not move.
 
-### What the internal task list says
-
-Bullets 1 and 3: move both in one transaction, or drop Ownable. It omits
-bullets 2 and 4.
-
-The omission of bullet 2 is the most consequential in the whole task list.
-Implemented literally, the deployer hands over ownership and administration
-**and keeps `MINTER_ROLE`**, still able to mint to the cap. The single point
-of failure survives the fix, and the finding would have been closed while open.
-
 ### What the source says
 
 `transferOwnershipCustom()` was the only function in the contract carrying
@@ -190,17 +158,17 @@ of failure survives the fix, and the finding would have been closed while open.
 So Ownable existed for one purpose: to protect the function that transferred
 Ownable. Circular, and custodian of nothing.
 
-One more thing the report did not catch: `Ownable.transferOwnership()` remained
-`public virtual onlyOwner` and inherited. An owner could call it directly,
-bypass the custom function's checks, and **emit no `TransferNewOwner` event**,
-so an indexer listening on that event would miss the transfer. The report had
-marked "malicious event log" as passed. Tracked as HC-TKN-011.
+Reading the source surfaced a second issue in the same area.
+`Ownable.transferOwnership()` remained `public virtual onlyOwner` and
+inherited. An owner could call it directly, bypass the custom function's checks
+and **emit no `TransferNewOwner` event**, so an indexer listening on that event
+would miss the transfer. Tracked as HC-TKN-011.
 
 ### Decision
 
 The report offers two routes. Verifying the pinned OpenZeppelin version turned
-up a third that neither document considered: `AccessControlDefaultAdminRules`,
-a standard extension available in the exact commit the client pins.
+up a third: `AccessControlDefaultAdminRules`, a standard extension available in
+the exact commit the client pins.
 
 It beats both. Under it, `owner()` is a view over `defaultAdmin()` as defined
 by ERC-5313. Ownership and administrative control are **the same value**, so
@@ -223,16 +191,17 @@ window in which a hostile transfer can be spotted and cancelled. An attacker
 holding the admin key cannot shorten it: lowering the delay is itself subject
 to a wait equal to the delay being removed.
 
-**What the extension does not do**, and the answer to the bullet the task list
-omitted: it governs `DEFAULT_ADMIN_ROLE` only. `MINTER_ROLE` and `PAUSER_ROLE`
-stay with the outgoing admin until someone revokes them. Three options were
-weighed: automate it in the contract, do not grant them at deployment at all,
-or keep it procedural. Procedural was chosen: automating it means bespoke code
-in the exact place where a standard module was adopted to avoid it, and is
-wrong in cases where an outgoing admin should keep the ability to pause during
-a transition. The obligation moves to the deployment runbook, and
-`test_HCTKN002_HandoverDoesNotCarryMinterOrPauser` states the boundary in
-writing so no runbook assumes what the code does not do.
+**What the extension does not do.** It governs `DEFAULT_ADMIN_ROLE` only.
+`MINTER_ROLE` and `PAUSER_ROLE` stay with the outgoing admin until someone
+revokes them, which matters because an admin who hands over everything else and
+keeps `MINTER_ROLE` can still mint to the cap. Three options were weighed:
+automate the other roles in the contract, do not grant them at deployment, or
+keep it procedural. Procedural was chosen, because automating it means bespoke
+code in the exact place where a standard module was adopted to avoid it, and is
+wrong where an outgoing admin should keep the ability to pause during a
+transition. The obligation sits in the deployment runbook, and
+`test_HCTKN002_HandoverDoesNotCarryMinterOrPauser` states the boundary so no
+runbook assumes what the code does not do.
 
 ### Regression coverage
 
@@ -254,9 +223,9 @@ inherited `transferOwnership()` bypass disappears with the base class.
 
 ## HC-TKN-003 · Deployer receives every role
 
-**Itish severity: Low.** The client's task list reclassifies it as important,
-and that is the better calibration: for a token headed to a public presale, one
-EOA holding every role is not a low risk.
+**Itish severity: Low.** For a token headed to a public presale, one EOA
+holding every role is the single point of failure the rest of the remediation
+depends on.
 
 ### What the report says
 
@@ -265,11 +234,6 @@ timelock. Four bullets: deploy with a multisig as initial holder, distribute
 roles to purpose-specific contracts and revoke the deployer's copies, **a
 timelock on `DEFAULT_ADMIN_ROLE` actions**, and **publish the role-holder
 addresses for holder transparency**.
-
-### What the internal task list says
-
-Bullet 1, plus an implementation decision the report does not make: add a
-parameter to the constructor. It omits the timelock and the publication.
 
 ### What the source says
 
@@ -284,28 +248,29 @@ the extension itself.
 
 The timelock bullet is satisfied for administrative handover by
 `AccessControlDefaultAdminRules`, adopted under HC-TKN-002. A general timelock
-on every admin action is not implemented inside the token: it is resolved at
-deployment by making the administrator a Safe. Recorded here rather than
-silently dropped.
+on every admin action is not implemented inside the token. It is resolved at
+deployment by making the administrator a Safe.
 
 The publication bullet is operational and belongs to the deployment runbook.
 
 **The code half alone would not have closed this finding.** The constructor
 makes it *possible* to deploy correctly, but nothing made it *inevitable*. So the
 remediation includes `script/DeployHackToken.s.sol`, with the multisig address
-as a constant rather than an environment variable, because a mistyped variable on
-deployment day would reintroduce the finding with nobody noticing, whereas a
-constant is part of the diff the auditor reads and gives post-deployment
-verification something to compare against.
+as a compile-time constant and not an environment variable, because a mistyped
+variable on deployment day would reintroduce the finding with nobody noticing,
+whereas a constant is part of the diff a reviewer reads.
 
-The multisig was verified on-chain before writing the script, not taken
-on trust: Safe v1.4.1 at `0x1111111111111111111111111111111111111111` on Polygon
-(chain id 137), threshold 2 of 3, deployed and with transactions executed.
+The multisig was verified on-chain before writing the script, not taken on
+trust: a Safe v1.4.1 on Polygon (chain id 137), threshold 2 of 3, already
+deployed and with transactions executed. Its address does not appear in this
+repository, because the token is not deployed yet and the administrator address
+is not published ahead of time. The code carries a placeholder constant
+instead.
 
 Chain support was verified the same way. Solidity 0.8.24 compiles this contract
 against `cancun`, so Cancun opcodes had to be available: `MCOPY` and `TSTORE`
 were executed through `eth_call` against Polygon, with an invalid opcode as a
-negative control to confirm the test discriminates instead of passing
+negative control to confirm the test discriminates and does not simply pass
 everything.
 
 ### Regression coverage
@@ -320,8 +285,7 @@ pre-minted. The rest pin the end state a block-explorer review should find.
 
 ## HC-TKN-004 · Mint cap tracks lifetime mints, not supply
 
-**Itish severity: Low** in the detailed findings, *Moderate* in the same
-report's checklist. See the questions at the end of this document.
+**Itish severity: Low.**
 
 ### What the report says
 
@@ -334,11 +298,6 @@ lifetime semantics explicitly if it is genuinely a lifetime cap, and add a
 The harm described: *"as the PenaltySystem burns tokens from penalized users
 and StakingContract-style rewards are minted, mintedTokens will permanently
 approach maxSupply … eventually blocking all future minting."*
-
-### What the internal task list says
-
-All three bullets. **The only task in the list that carries the report's
-remediation in full.**
 
 ### What the source says
 
@@ -372,11 +331,10 @@ Exhausting the cap is the intended end state, not the failure the report fears.
 Minting stops, and rewards keep flowing from the pre-allocated incentives bucket.
 
 The contract's behaviour is unchanged by this remediation. What changed is that
-the semantics moved from an undocumented side effect, which is what led the
-auditor to read it as a defect, to a declared property pinned by tests.
-`remainingMintable()` was added. `mintedTokens` keeps its name despite being
-what misled the auditor: it is public interface listed in the report, and
-renaming it would break integrators for a clarity gain that NatSpec provides.
+the semantics moved from an undocumented side effect to a declared property
+pinned by tests. `remainingMintable()` was added. `mintedTokens` keeps its name:
+it is public interface listed in the report, and renaming it would break
+integrators for a clarity gain that NatSpec provides.
 
 ### Regression coverage
 
@@ -394,42 +352,32 @@ the other trips a test and never reaches deployment.
 
 **Itish severity: Low.** Correct, and closed as a side effect of HC-TKN-002.
 
-The report asks for `Ownable2Step` and a pending-transfer event. The task list
-carries the first, and the second comes free with the extension.
-
-The task list presents this and HC-TKN-002 as independent items without
-declaring the dependency between them. They are not independent: the "remove
-Ownable" route offered under HC-TKN-002 leaves this finding without an object.
-Anyone planning against that document would have budgeted work that can
-evaporate.
-
+The report asks for `Ownable2Step` and a pending-transfer event.
 `AccessControlDefaultAdminRules` supplies the two-step transfer with acceptance
-for `DEFAULT_ADMIN_ROLE`, which is now the only control the contract has. The
-regressions live in `TokenHCTKN002Test.t.sol` alongside the rest of the
-handover behaviour, and `testAdminTransferDoesNotTakeEffectWithoutAcceptance`
-carries the finding in the map file.
+for `DEFAULT_ADMIN_ROLE`, which is now the only control the contract has, and
+the event comes with it. The regressions live in `TokenHCTKN002Test.t.sol`
+alongside the rest of the handover behaviour, and
+`testAdminTransferDoesNotTakeEffectWithoutAcceptance` carries the finding in
+the map file.
 
 ---
 
 ## HC-TKN-006 to HC-TKN-010 · Informational and gas
 
-The task list groups these as one item and carries all five correctly. Two were
-closed earlier as side effects, and the other three went in together.
-
 | | Report's ask | Resolution |
 |---|---|---|
-| **006** | custom error instead of the raw `require` string in `_update()` | Took the report's **second** option, which the task list omits: inherit `ERC20Pausable`. The bespoke `require` disappears and the revert becomes `EnforcedPause()`, OpenZeppelin's standard error, rather than inventing a `ContractPaused()` of our own. `_update()` survives only as a two-line disambiguation stub. |
-| **007** | correct the NatSpec claiming the override exists because Ownable and AccessControl conflict | Went further: with Ownable gone only one parent implements `supportsInterface`, so the override was **deleted** rather than re-commented. Closed with HC-TKN-002. |
+| **006** | custom error instead of the raw `require` string in `_update()` | Took the report's **second** option: inherit `ERC20Pausable`. The bespoke `require` disappears and the revert becomes `EnforcedPause()`, OpenZeppelin's standard error, rather than inventing a `ContractPaused()` of our own. `_update()` survives only as a two-line disambiguation stub. |
+| **007** | correct the NatSpec claiming the override exists because Ownable and AccessControl conflict | Went further: with Ownable gone only one parent implements `supportsInterface`, so the override was **deleted**, not re-commented. Closed with HC-TKN-002. |
 | **008** | index `TokenMinted.to` | Done. The event was kept, not removed, although it duplicates `Transfer(0x0, to, amount)`. The asymmetry the report cited was against `TokenBurned`, which no longer exists, but deleting public interface an integrator may already consume was nobody's request. |
 | **009** | `maxSupply` as `immutable` | Done, assigned in the constructor. |
 | **010** | remove the balance check in `burn()` that `_burn()` already performs | Closed with HC-TKN-001: the check and its custom error lived inside the function that was removed. |
 
 **HC-TKN-012**, from the annex: `mintTokens()` is blocked while paused but did
-not declare it. Documented in NatSpec rather than given a `whenNotPaused`
-modifier, because the modifier would duplicate the check `_update()` already performs,
-which is precisely the pattern the report flagged as GAS-2 and that was removed
-under HC-TKN-010. Fixing one inconsistency by recreating the one just closed
-would be a poor trade.
+not declare it. Documented in NatSpec and not given a `whenNotPaused` modifier,
+because the modifier would duplicate the check `_update()` already performs,
+which is the pattern the report flagged as GAS-2 and that was removed under
+HC-TKN-010. Fixing one inconsistency by recreating the one just closed would be
+a poor trade.
 
 ### Regression coverage
 
@@ -440,21 +388,3 @@ unpausing. `TokenMinted` is filterable by recipient, asserted twice, once that
 the topic is emitted and once that filtering by it actually discriminates
 between two mints to different addresses. The immutable cap holds its value and
 is set per deployment.
-
----
-
-## Questions returned to the auditor
-
-Two issues in the report itself, raised with Itish and not resolved
-unilaterally.
-
-**Severity ratings contradict each other inside the report.** The "Issues
-Checking Status" table marks item 22 (*Role-based access control vs. Ownable
-separation*) as **Severe** and items 10, 11 and 23 as **Moderate**, while the
-severity breakdown on the following page states **Medium: 0**. The supply-cap
-issue appears as *Moderate* in the table and *Low* in the detailed findings.
-
-**One "Moderate" is never explained.** Item 11 of the checklist, *Economy model
-of the contract*, is flagged **Moderate** and has no corresponding detailed
-finding anywhere in the report. Either the template was left uncleaned, or an
-observation did not make it into the document.

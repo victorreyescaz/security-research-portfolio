@@ -97,9 +97,8 @@ as `owner()`) and who could actually mint is the entire risk.
 
 The report offered two routes: migrate the admin role inside the custom
 transfer, or remove Ownable entirely. Verifying the pinned OpenZeppelin version
-turned up a third that neither the report nor the client's task list had
-considered: **`AccessControlDefaultAdminRules`**, a standard extension present
-in the exact commit the client pins.
+turned up a third: **`AccessControlDefaultAdminRules`**, a standard extension
+present in the exact commit the client pins.
 
 ```solidity
 contract HackToken is ERC20, ERC20Burnable, ERC20Pausable, AccessControlDefaultAdminRules
@@ -125,13 +124,13 @@ a hostile transfer can be spotted and cancelled. An attacker holding the admin
 key cannot shorten it: reducing the delay is itself subject to a wait equal to
 the reduction.
 
-### The bullet the client's task list omitted
+### The roles the extension does not move
 
 The audit asked to *"decide explicitly whether MINTER_ROLE / BURNER_ROLE /
-PAUSER_ROLE held by the deployer should also be revoked at the same time"*. The
-internal task list dropped it. Implemented as written there, the deployer would
-hand over ownership and administration and **keep `MINTER_ROLE`**, still able
-to mint to the cap. The finding would have been closed while open.
+PAUSER_ROLE held by the deployer should also be revoked at the same time"*.
+That bullet matters more than it looks. An admin who hands over ownership and
+administration while keeping `MINTER_ROLE` is still able to mint to the cap,
+so the finding would read as closed while the single point of failure survives.
 
 The extension governs `DEFAULT_ADMIN_ROLE` only. Three options were weighed:
 automate the other roles in the contract, do not grant them at deployment, or
