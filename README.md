@@ -37,7 +37,8 @@ what the contract does. Severity is argued in each write-up, not asserted.
 ## Stack
 
 - **Languages**: Solidity
-- **Testing**: Foundry (`forge test`), proof-of-concept exploits and regression tests
+- **Testing**: Foundry (`forge test`), proof-of-concept exploits, regression
+  tests, fuzzing and invariant runs
 - **Focus areas**: access control and role consistency, state ownership across
   modules, reward accounting, deployment-time invariants
 

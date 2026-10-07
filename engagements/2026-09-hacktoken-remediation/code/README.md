@@ -15,7 +15,7 @@ forge test
 ## Expected result
 
 ```text
-55 tests passed, 0 failed, 0 skipped (55 total tests)
+62 tests passed, 0 failed, 0 skipped (62 total tests)
 ```
 
 Everything is green, and no test is left failing by design. Every proof of

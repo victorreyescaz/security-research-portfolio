@@ -62,12 +62,27 @@ analysis lies. In both, verifying the report against the source changed what
 the right remediation was. The other eight are covered finding by finding in
 [`verification-of-external-findings.md`](verification-of-external-findings.md).
 
-**55 tests** on the token: 5 in the map file, 50 in the regression batteries.
+**62 tests** on the token: 5 in the map file, 50 in the regression batteries,
+3 fuzz tests on the cap guard and 4 supply invariants.
+
+The invariants are in `code/test/invariant/`. HC-TKN-004 settled that the cap
+counts lifetime issuance and not circulating supply, which is a property over
+every possible sequence of mints and burns. The regression battery states it
+with fixed values. The invariant run states it over sequences the fuzzer
+builds, driving the real entry points through a handler: 128,000 calls per
+invariant, no reverts and no discards.
+
+The handler only ever mints within the available headroom, because one that
+reverted on most calls would explore nothing, so the cap guard itself is
+covered separately by `TokenMintBoundaryFuzzTest`. Past a certain size
+`mintedTokens + amount_` overflows and reverts with a panic before the cap
+check is reached, so the fuzz test asserts that issuance does not move rather
+than asserting one specific error.
 
 ## Two findings outside the report
 
 Both surfaced while verifying the report against the source. Neither appears in
-the Itish report nor in the client's internal task list.
+the Itish report.
 
 - **Inherited `transferOwnership()` bypasses the custom transfer path.**
   `Ownable.transferOwnership()` remains `public virtual onlyOwner`, so an owner
