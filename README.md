@@ -43,8 +43,10 @@ what the contract does. Severity is argued in each write-up, not asserted.
 ## Permissions and licensing
 
 This work is published with the written permission of HackChain, the client
-that commissioned it, on one condition: nothing published here may be
-vulnerable. Third-party audit reports belonging to other firms are not
+that commissioned it, on one condition: a finding is published once it is
+resolved, in full, and nothing is published about a finding that is still
+open. That is why some engagements here show fewer proofs of concept than
+findings. Third-party audit reports belonging to other firms are not
 redistributed here. Where this repository covers findings from an external
 audit, those findings are credited to their authors and described in my own
 words.
