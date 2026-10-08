@@ -57,23 +57,28 @@ be a map.
 See the [disclosure policy](../../about/disclosure-policy.md) for the rules
 behind that.
 
-## Why there is no code here
+## The code, and what is in it
 
-This engagement publishes write-ups and no contract source, which is the one
-place where it differs from the HackToken engagement in this repository.
+The audited contracts, the proofs of concept and the regression tests are under
+[`code/`](code/). Clone the repository and `forge test` runs them.
 
-The reason is the overlap. The contracts that the closed findings touch are,
-for the most part, the same contracts that still carry open findings.
-Publishing enough code to make these proofs of concept runnable would mean
-publishing contracts that are vulnerable by other routes, which is exactly what
-the condition above rules out.
+```text
+149 tests passed, 3 failed, 0 skipped (152 total tests)
+```
 
-Each write-up carries the reproduction, the transcript, the applied fix and the
-regression tests that hold it in place. What is missing is the ability to run
-them yourself, and that comes back as the surrounding findings close.
+The three failures are the proofs of concept for HC-SRC-002, HC-SRC-004 and
+HC-SRC-007, kept unmodified and now reverting with `ProfileBlocked()`,
+`NotEducator()` and `NotRegistered()` at the guards that closed them.
 
-For an engagement in this repository that you can clone and run, see
-[HackToken](../2026-09-hacktoken-remediation/).
+`test/exploits/` holds one proof of concept per **published** finding and
+nothing else. The six still under remediation have proofs of concept too, and
+they stay out. A working exploit against a vulnerability that is still open is
+an attack tool, whoever publishes it and whatever the intent.
+
+The contracts themselves are the client's and are already public in
+[their own repository](https://github.com/Noahlp125/hackchain-token-contracts).
+Including them here adds no exposure and makes the published findings
+reproducible, which is the whole point of showing the work.
 
 ## How a finding gets closed here
 

@@ -5,11 +5,9 @@ Solidity · Foundry · EVM
 
 [![CI](https://github.com/victorreyescaz/security-research-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/victorreyescaz/security-research-portfolio/actions/workflows/ci.yml)
 
-Each engagement here has the analysis and a write-up for every finding that can
-be published. Where the client's code can be published too, it comes with
-Foundry tests you can run yourself. Where it cannot yet, each write-up carries
-the proof of concept and the transcript of its run instead. Either way, if
-something is described here, there is a test that shows it.
+Each engagement here has the analysis, a write-up for every finding that can be
+published, and the code with Foundry tests you can run yourself. If something
+is described here, there is a test that shows it.
 
 ## Engagements
 

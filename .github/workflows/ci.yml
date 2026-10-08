@@ -29,3 +29,72 @@ jobs:
       # failing by design and the whole suite is the signal.
       - name: Run tests
         run: forge test
+
+  hackchain:
+    name: HackChain review — regression suite
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: engagements/2026-08-hackchain/code
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      - name: Build
+        run: forge build
+
+      # test/exploits/ is excluded on purpose. Those proofs of concept assert
+      # vulnerable behaviour, so neither their passing nor their failing means
+      # the security properties hold. The job below checks them instead.
+      - name: Run regression tests
+        run: forge test --no-match-path 'test/exploits/*'
+
+  hackchain-exploits-stay-closed:
+    name: HackChain review — exploits stay closed
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: engagements/2026-08-hackchain/code
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      # Stronger than skipping the exploits: each one must keep failing, and
+      # keep failing with the revert its remediation introduced. If a refactor
+      # removes a guard, the exploit passes again and this job goes red.
+      - name: Assert each closed exploit still reverts for the right reason
+        run: |
+          set +e
+          output=$(forge test --match-path 'test/exploits/*' 2>&1)
+          code=$?
+          set -e
+
+          echo "$output"
+
+          if [ $code -eq 0 ]; then
+            echo "::error::Every exploit passed. At least one vulnerable path is open again."
+            exit 1
+          fi
+
+          for pair in \
+            "testBlockedProfileCanStillOpenAStake:ProfileBlocked()" \
+            "testRevokedEducatorCanStillReceiveEducatorBonus:NotEducator()" \
+            "testUnregisteredRecruiterCanClaimMonthlyHiringBonus:NotRegistered()"
+          do
+            test_name="${pair%%:*}"
+            expected="${pair##*:}"
+            if ! echo "$output" | grep -q "FAIL: ${expected}\] ${test_name}"; then
+              echo "::error::${test_name} is not failing with ${expected}."
+              exit 1
+            fi
+          done
+
+          echo "All three closed exploits revert with the error their fix introduced."
