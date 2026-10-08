@@ -29,7 +29,7 @@ rewards, kept activating memberships and kept collecting bonuses.
 ## Proof of concept
 
 `testBlockedProfileCanStillOpenAStake()` in
-`test/exploits/AuditValidation.t.sol`, in the client repository:
+[`code/test/exploits/HC-SRC-002.t.sol`](../code/test/exploits/HC-SRC-002.t.sol):
 
 ```solidity
 token.mintTokens(user, 2_000 ether);
@@ -195,8 +195,8 @@ enforcer-driven payout and was scoped out of this fix.
 Ran 23 test suites: 121 tests passed, 1 failed, 0 skipped (122 total tests)
 
 Failing tests:
-Encountered 1 failing test in test/AuditValidation.t.sol:AuditValidationTemp
-[FAIL: ProfileBlocked()] testBlockedProfileCanStillOpenAStake() (gas: 9069013)
+Encountered 1 failing test in test/exploits/HC-SRC-002.t.sol:HCSRC002PoC
+[FAIL: ProfileBlocked()] testBlockedProfileCanStillOpenAStake() (gas: 9266881)
 ```
 
 That single failure is the point. The proof of concept now reverts with
