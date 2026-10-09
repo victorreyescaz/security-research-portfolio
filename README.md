@@ -13,7 +13,7 @@ is described here, there is a test that shows it.
 
 | Engagement | Type | Scope | Findings | Severity | Status |
 |---|---|---|---|---|---|
-| [HackChain](engagements/2026-08-hackchain/) | Security review, my own findings | 14 contracts, ~4,200 LoC Solidity | 10, found by me | 4 High · 4 Medium · 2 Low | 4 published · 6 under remediation |
+| [HackChain](engagements/2026-08-hackchain/) | Security review, my own findings | 14 contracts, ~4,200 LoC Solidity | 12, found by me | 4 High · 6 Medium · 2 Low | 7 published · 5 under remediation |
 | [HackToken](engagements/2026-09-hacktoken-remediation/) | Remediation of a third-party audit | 1 contract, 130 LoC Solidity | 10, found by Itish Audit Company | 2 High · 3 Low · 3 Informational · 2 Gas | 10 verified · re-review pending |
 
 ## How I work

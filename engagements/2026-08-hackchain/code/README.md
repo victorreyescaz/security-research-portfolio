@@ -14,24 +14,20 @@ forge test
 ## Expected result
 
 ```text
-149 tests passed, 3 failed, 0 skipped (152 total tests)
-
-[FAIL: ProfileBlocked()]  testBlockedProfileCanStillOpenAStake()
-[FAIL: NotEducator()]     testRevokedEducatorCanStillReceiveEducatorBonus()
-[FAIL: NotRegistered()]   testUnregisteredRecruiterCanClaimMonthlyHiringBonus()
+185 tests passed, 6 failed, 0 skipped (191 total tests)
 ```
 
-**The three failures are the point.** They are the original proofs of concept
-for HC-SRC-002, HC-SRC-004 and HC-SRC-007, kept unmodified after the
-vulnerabilities were fixed. Each now reverts at the guard that closed it, and
-the revert reason is the evidence: a different error would mean the test is
-failing for the wrong reason.
+**The six failures are the point.** They are original proofs of concept for
+closed findings, kept unmodified. Three revert at the guard their fix added,
+and the revert reason is the evidence: a different error would mean the test
+is failing for the wrong reason. The other three fail because the behaviour
+they assert is gone.
 
 To run only the tests that assert the security properties hold:
 
 ```bash
 forge test --no-match-path 'test/exploits/*'
-# 148 tests passed, 0 failed
+# 183 tests passed, 0 failed
 ```
 
 ## Layout
@@ -51,24 +47,32 @@ statement of what the contracts do.
 
 | Finding | Proof of concept | Result today |
 |---|---|---|
-| [HC-SRC-002](../findings/HC-SRC-002-blocked-profile-enforcement.md) | `testBlockedProfileCanStillOpenAStake` | fails with `ProfileBlocked()`, closed |
-| [HC-SRC-003](../findings/HC-SRC-003-penalty-evidence-snapshot.md) | `testPenaltyCanBeAvoidedByEmptyingCurrentBalance` | passes, and now demonstrates the fix |
-| [HC-SRC-004](../findings/HC-SRC-004-role-registry-consistency.md) | `testRevokedEducatorCanStillReceiveEducatorBonus` | fails with `NotEducator()`, closed |
-| [HC-SRC-007](../findings/HC-SRC-007-unregistered-recruiter-hiring-bonus.md) | `testUnregisteredRecruiterCanClaimMonthlyHiringBonus` | fails with `NotRegistered()`, closed |
+| [HC-SRC-001](../findings/HC-SRC-001-academic-cycle-accounting.md) | `testAcademicCycleAdvancesWithoutSeparatingOldViews` | adapted, passes and demonstrates the fix |
+| [HC-SRC-002](../findings/HC-SRC-002-blocked-profile-enforcement.md) | `testBlockedProfileCanStillOpenAStake` | fails with `ProfileBlocked()` |
+| [HC-SRC-003](../findings/HC-SRC-003-penalty-evidence-snapshot.md) | `testPenaltyCanBeAvoidedByEmptyingCurrentBalance` | adapted, passes and demonstrates the fix |
+| [HC-SRC-004](../findings/HC-SRC-004-role-registry-consistency.md) | `testRevokedEducatorCanStillReceiveEducatorBonus` | fails with `NotEducator()` |
+| [HC-SRC-007](../findings/HC-SRC-007-unregistered-recruiter-hiring-bonus.md) | `testUnregisteredRecruiterCanClaimMonthlyHiringBonus` | fails with `NotRegistered()` |
+| [HC-SRC-011](../findings/HC-SRC-011-blocking-penalty-zero-evidence.md) | `testPenaltyWithZeroEvidenceLeavesProfileUnblocked` and one more | fail, the expected revert no longer happens |
+| [HC-SRC-012](../findings/HC-SRC-012-block-ownership-by-source.md) | `testSettlingUnrelatedDebtLiftsManualBlock` | fails on its assertion |
 
-HC-SRC-003 is the one that could not stay red. Its remediation changed the
-function signatures, so the original call no longer compiles. The test was
-adapted and now asserts the safe behaviour instead, which its write-up explains
-in full.
+Two could not stay red. HC-SRC-003 and HC-SRC-001 had their remediations
+change the interface the exploit called, so the original no longer compiles.
+Both were adapted to assert the safe behaviour, and both keep their original
+form and transcript in the test file.
 
 The findings still under remediation have proofs of concept too. They are not
 here, and the reason is in the [engagement page](../README.md).
 
 ### `test/regression/`
 
-The batteries written for each closed finding, 31 tests for HC-SRC-002, 3 for
-HC-SRC-003, 30 for HC-SRC-004 and 3 for HC-SRC-007, alongside the project's own
-pre-existing suite covering remediations that predate this review.
+The batteries written for each closed finding, 9 tests for HC-SRC-001, 31 for
+HC-SRC-002, 3 for HC-SRC-003, 30 for HC-SRC-004, 3 for HC-SRC-007, 8 for
+HC-SRC-011 and 13 for HC-SRC-012, alongside the project's own pre-existing
+suite covering remediations that predate this review.
+
+Two of them are fuzz runs rather than unit tests, on the properties where a
+fixed value states too little: claim order independence in HC-SRC-001, and the
+evidence balance across its whole range in HC-SRC-011.
 
 ## Provenance
 
