@@ -67,10 +67,11 @@ jobs:
         with:
           version: stable
 
-      # Stronger than skipping the exploits: each one must keep failing, and
-      # keep failing with the revert its remediation introduced. If a refactor
-      # removes a guard, the exploit passes again and this job goes red.
-      - name: Assert each closed exploit still reverts for the right reason
+      # Stronger than skipping the exploits: each one that was left unmodified
+      # must keep failing, and keep failing for the reason its remediation
+      # produced. If a refactor removes a guard, the exploit passes again and
+      # this job goes red.
+      - name: Assert each closed exploit still fails for the right reason
         run: |
           set +e
           output=$(forge test --match-path 'test/exploits/*' 2>&1)
@@ -84,17 +85,29 @@ jobs:
             exit 1
           fi
 
-          for pair in \
-            "testBlockedProfileCanStillOpenAStake:ProfileBlocked()" \
-            "testRevokedEducatorCanStillReceiveEducatorBonus:NotEducator()" \
-            "testUnregisteredRecruiterCanClaimMonthlyHiringBonus:NotRegistered()"
-          do
-            test_name="${pair%%:*}"
-            expected="${pair##*:}"
-            if ! echo "$output" | grep -q "FAIL: ${expected}\] ${test_name}"; then
-              echo "::error::${test_name} is not failing with ${expected}."
+          # HC-SRC-001 and HC-SRC-003 are not listed: their remediations changed
+          # the interface the exploit called, so both were adapted and now pass.
+          while IFS='|' read -r test_name reason; do
+            [ -z "$test_name" ] && continue
+            if ! echo "$output" | grep -qF "FAIL: ${reason}] ${test_name}"; then
+              echo "::error::${test_name} is not failing with: ${reason}"
               exit 1
             fi
-          done
+          done <<'EXPECTED'
+testBlockedProfileCanStillOpenAStake|ProfileBlocked()
+testRevokedEducatorCanStillReceiveEducatorBonus|NotEducator()
+testUnregisteredRecruiterCanClaimMonthlyHiringBonus|NotRegistered()
+testPenaltyWithZeroEvidenceLeavesProfileUnblocked|next call did not revert as expected
+testPenaltyRoundingToZeroLeavesProfileUnblocked|next call did not revert as expected
+testSettlingUnrelatedDebtLiftsManualBlock|el bloqueo manual se levanta al pagar una deuda que no lo puso
+EXPECTED
 
-          echo "All three closed exploits revert with the error their fix introduced."
+          # forge prints each failure twice, inline and in the summary, so the
+          # total comes from the summary line rather than from counting them.
+          failed=$(echo "$output" | sed -n 's/^Encountered a total of \([0-9]*\) failing tests.*//p')
+          if [ "$failed" != "6" ]; then
+            echo "::error::Expected exactly 6 failing exploits, found ${failed}. An adapted proof of concept may have broken."
+            exit 1
+          fi
+
+          echo "All six unmodified exploits fail for the reason their fix produced."
