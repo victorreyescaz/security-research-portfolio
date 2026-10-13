@@ -192,11 +192,9 @@ enforcer-driven payout and was scoped out of this fix.
 ### The original exploit no longer works
 
 ```text
-Ran 23 test suites: 121 tests passed, 1 failed, 0 skipped (122 total tests)
-
 Failing tests:
 Encountered 1 failing test in test/exploits/HC-SRC-002.t.sol:HCSRC002PoC
-[FAIL: ProfileBlocked()] testBlockedProfileCanStillOpenAStake() (gas: 9266881)
+[FAIL: ProfileBlocked()] testBlockedProfileCanStillOpenAStake()
 ```
 
 That single failure is the point. The proof of concept now reverts with

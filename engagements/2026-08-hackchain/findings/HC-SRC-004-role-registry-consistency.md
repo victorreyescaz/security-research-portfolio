@@ -195,7 +195,7 @@ exemption so it is not "fixed" later by accident.
 ```text
 Failing tests:
 Encountered 1 failing test in test/exploits/HC-SRC-004.t.sol:HCSRC004PoC
-[FAIL: NotEducator()] testRevokedEducatorCanStillReceiveEducatorBonus() (gas: 7667933)
+[FAIL: NotEducator()] testRevokedEducatorCanStillReceiveEducatorBonus()
 ```
 
 The proof of concept now reverts with `NotEducator()`, at the check that was

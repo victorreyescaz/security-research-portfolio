@@ -28,7 +28,7 @@ To run only the regression batteries, leaving the reproduction tests out:
 
 ```bash
 forge test --no-match-path 'test/exploits/*'
-# 50 tests passed, 0 failed
+# 57 tests passed, 0 failed
 ```
 
 ## Layout

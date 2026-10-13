@@ -118,7 +118,7 @@ function, so the proof of concept fails through its own fix, `NotRegistered()`.
 ```text
 Failing tests:
 Encountered 1 failing test in test/exploits/HC-SRC-007.t.sol:HCSRC007PoC
-[FAIL: NotRegistered()] testUnregisteredRecruiterCanClaimMonthlyHiringBonus() (gas: 7803044)
+[FAIL: NotRegistered()] testUnregisteredRecruiterCanClaimMonthlyHiringBonus()
 ```
 
 The proof of concept reverts with `NotRegistered()` at the first
