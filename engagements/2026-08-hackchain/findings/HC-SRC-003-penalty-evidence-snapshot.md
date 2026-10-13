@@ -121,11 +121,9 @@ than presenting both findings as if they were verified the same way.
 
 ## Residual risk
 
-`applyIdentityFraudPenalty`, `applyMassSalePenalty` and `applyNoShowPenalty`
-had no test coverage at all before this work. They now have one test each
-through the new battery, which is enough to pin the evidence-amount property
-but is not the depth that `PenaltySystemH04Test.t.sol` gives the functions
-that were already in use. Widening that coverage is recorded as future work.
+The new battery pins the evidence-amount property across the penalty paths,
+which is the property this finding is about. Carrying the rest of those paths
+to the same depth of coverage is recorded as future work.
 
 The evidence figure is only as good as the enforcer supplying it. That is a
 deliberate property of the design and not a defect, but it means the control

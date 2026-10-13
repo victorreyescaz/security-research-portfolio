@@ -245,8 +245,7 @@ The enforcer is still trusted for everything other than the role. The
 contract now refuses to pay an account that does not hold the right role, but
 whether the activity being rewarded really happened is still decided
 off-chain. That is the protocol's trust model, not something this fix
-changes. Other parts of what the enforcer-side functions leave open relate to
-findings still under remediation and not published yet.
+changes.
 
 A winner whose role is revoked during the claim window cannot be replaced.
 `registerWinner()` allows one winner per role per month, so that month's
